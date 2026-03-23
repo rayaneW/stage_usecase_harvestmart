@@ -29,8 +29,7 @@ metadata:
 spec:
   selector:
     app: harvestmart-frontend
-  type: NodePort
+  type: ClusterIP
   ports:
     - port: 80
       targetPort: 80
-      nodePort: 30000              # Access app at http://localhost:30000

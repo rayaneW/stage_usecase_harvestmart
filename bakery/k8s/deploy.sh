@@ -17,6 +17,7 @@ NAMESPACE="freshmart"
 if [[ "${1:-}" == "--teardown" ]]; then
   echo ""
   echo "==> Removing all K8s resources..."
+  kubectl delete -f "$K8S_DIR/ingress.yaml"            --ignore-not-found
   kubectl delete -f "$K8S_DIR/grafana-deployment.yaml"    --ignore-not-found
   kubectl delete -f "$K8S_DIR/prometheus-deployment.yaml" --ignore-not-found
   kubectl delete -f "$K8S_DIR/frontend-deployment.yaml" --ignore-not-found
@@ -65,6 +66,7 @@ kubectl apply -f "$K8S_DIR/backend-deployment.yaml"
 kubectl apply -f "$K8S_DIR/prometheus-deployment.yaml"
 kubectl apply -f "$K8S_DIR/grafana-deployment.yaml"
 kubectl apply -f "$K8S_DIR/frontend-deployment.yaml"
+kubectl apply -f "$K8S_DIR/ingress.yaml"
 
 # ── Wait for deployments ──────────────────────────────────────────
 echo ""
@@ -79,7 +81,8 @@ kubectl rollout status deployment/harvestmart-frontend -n "$NAMESPACE" --timeout
 echo ""
 echo "========================================"
 echo "  FreshMart is running!"
-echo "  Open: http://localhost:30000"
+echo "  Open (after hosts entry): http://freshmart.local"
+echo "  Fallback (NodePort removed): use ingress controller on port 80"
 echo "  Prometheus: http://localhost:30090"
 echo "  Grafana: http://localhost:30300 (admin/admin)"
 echo "  Namespace: $NAMESPACE"

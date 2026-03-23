@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: freshmart-ingress
+  namespace: freshmart
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: freshmart.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: harvestmart-frontend-service
+                port:
+                  number: 80
