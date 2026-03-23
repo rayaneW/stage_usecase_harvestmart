@@ -19,6 +19,7 @@
         <router-link to="/">Home</router-link>
         <router-link to="/orders">Bestelling</router-link>
         <router-link to="/inventory">Voorraad</router-link>
+        <router-link to="/restock">Restock</router-link>
         <router-link to="/cart" class="cart-link">
           <span>Mandje</span>
           <span class="cart-count">{{ totalProducts }}</span>
