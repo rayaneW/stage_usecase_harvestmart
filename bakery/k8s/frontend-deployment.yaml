@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: harvestmart-frontend
-          image: harvestmart-frontend:latest
+          image: harvestmart-frontend:v1.0.1
           imagePullPolicy: Never          # use local image built by Docker Desktop
           ports:
             - containerPort: 80
