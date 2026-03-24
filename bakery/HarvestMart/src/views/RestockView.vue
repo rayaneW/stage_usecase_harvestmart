@@ -14,15 +14,17 @@
     <form class="restock-form" @submit.prevent="createRestockRequest">
       <h2>Nieuwe restock request</h2>
 
-      <label for="productId">Product ID</label>
-      <input
-        id="productId"
-        v-model.number="form.productId"
-        type="number"
-        min="1"
-        required
-        placeholder="Bijv. 1"
-      />
+      <label for="productId">Productnaam</label>
+      <select id="productId" v-model.number="form.productId" required>
+        <option :value="null" disabled>Selecteer een product</option>
+        <option v-for="product in products" :key="product.id" :value="product.id">
+          {{ product.name }}
+        </option>
+      </select>
+
+      <p v-if="selectedProduct" class="helper-text">
+        Geselecteerde product ID: {{ selectedProduct.id }}
+      </p>
 
       <label for="requestedQuantity">Requested quantity</label>
       <input
@@ -85,8 +87,9 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 
+const products = ref([])
 const requests = ref([])
 const loading = ref(true)
 const isSubmitting = ref(false)
@@ -97,6 +100,14 @@ const errorMessage = ref('')
 const form = reactive({
   productId: null,
   requestedQuantity: null,
+})
+
+const selectedProduct = computed(() => {
+  if (form.productId === null || form.productId === undefined) {
+    return null
+  }
+
+  return products.value.find((product) => Number(product.id) === Number(form.productId)) || null
 })
 
 const formatDateTime = (value) => {
@@ -158,6 +169,22 @@ const fetchRestockRequests = async () => {
     console.error(error)
   } finally {
     loading.value = false
+  }
+}
+
+const fetchProducts = async () => {
+  try {
+    const response = await fetch('/api/products')
+
+    if (!response.ok) {
+      throw new Error('Kon producten niet ophalen.')
+    }
+
+    const data = await response.json()
+    products.value = Array.isArray(data) ? data : []
+  } catch (error) {
+    errorMessage.value = 'Er ging iets mis bij het ophalen van producten.'
+    console.error(error)
   }
 }
 
@@ -246,7 +273,9 @@ const deliverRequest = async (id) => {
   }
 }
 
-onMounted(fetchRestockRequests)
+onMounted(async () => {
+  await Promise.all([fetchProducts(), fetchRestockRequests()])
+})
 </script>
 
 <style scoped>
@@ -300,16 +329,24 @@ onMounted(fetchRestockRequests)
   color: #444;
 }
 
-.restock-form input {
+.restock-form input,
+.restock-form select {
   border: 1px solid #d8d8d8;
   border-radius: 10px;
   padding: 10px 12px;
   font: inherit;
 }
 
-.restock-form input:focus {
+.restock-form input:focus,
+.restock-form select:focus {
   outline: 2px solid #ffd3be;
   border-color: #f24b01;
+}
+
+.helper-text {
+  margin: -2px 0 0;
+  color: #666;
+  font-size: 0.92rem;
 }
 
 .success-message,
