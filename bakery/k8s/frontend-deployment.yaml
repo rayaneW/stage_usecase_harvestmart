@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: harvestmart-frontend
-          image: harvestmart-frontend:v1.0.2
+          image: harvestmart-frontend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80
