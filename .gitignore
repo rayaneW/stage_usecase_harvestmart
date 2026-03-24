@@ -2,3 +2,4 @@ argocd.exe
 
 # Instana secrets - keep local only
 bakery/k8s/instana-secret.yaml
+bakery/k8s/frontend-instana-eum-secret.yaml

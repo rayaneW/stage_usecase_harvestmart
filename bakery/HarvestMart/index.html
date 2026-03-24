@@ -5,6 +5,25 @@
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vite App</title>
+    <script>
+      // Instana EUM key is injected at container startup via env var.
+      (function(s, t, a, n) {
+        s[t] || (s[t] = a, n = s[a] = function() { n.q.push(arguments); }, n.q = [], n.v = 2, n.l = 1 * new Date());
+      })(window, "InstanaEumObject", "ineum");
+
+      ineum("reportingUrl", "https://instana.id.internal/eum/");
+      const instanaEumKey = "__INSTANA_EUM_KEY__";
+      if (instanaEumKey && instanaEumKey !== "__INSTANA_EUM_KEY__") {
+        ineum("key", instanaEumKey);
+        ineum("trackSessions");
+      }
+    </script>
+    <script
+      defer
+      crossorigin="anonymous"
+      src="https://instana.id.internal/eum/1.8.1/eum.min.js"
+      integrity="sha384-qFzHZ5BC7HOPEBSYkbYSv+DBWrG34P1QW9mIaCR41db6yOJNYmH4antW6KLkc6v1"
+    ></script>
   </head>
   <body margin="0" padding="0">
     <div id="app"></div>
