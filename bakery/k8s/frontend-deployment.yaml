@@ -18,13 +18,6 @@ spec:
         - name: harvestmart-frontend
           image: harvestmart-frontend:latest
           imagePullPolicy: IfNotPresent
-          env:
-            - name: INSTANA_EUM_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: frontend-instana-eum
-                  key: INSTANA_EUM_KEY
-                  optional: true
           ports:
             - containerPort: 80
 ---
