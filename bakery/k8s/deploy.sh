@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# deploy.sh — Build Docker images and deploy FreshMart to local Kubernetes
-# Requires: Docker Desktop with Kubernetes enabled
+# deploy.sh — Build Docker images and deploy FreshMart to Minikube
+# Requires: Minikube and kubectl
 #
 # Usage:    ./deploy.sh
 # Teardown: ./deploy.sh --teardown
@@ -17,7 +17,6 @@ NAMESPACE="freshmart"
 if [[ "${1:-}" == "--teardown" ]]; then
   echo ""
   echo "==> Removing all K8s resources..."
-  kubectl delete -f "$K8S_DIR/ingress.yaml"            --ignore-not-found
   kubectl delete -f "$K8S_DIR/grafana-deployment.yaml"    --ignore-not-found
   kubectl delete -f "$K8S_DIR/prometheus-deployment.yaml" --ignore-not-found
   kubectl delete -f "$K8S_DIR/frontend-deployment.yaml" --ignore-not-found
@@ -35,17 +34,27 @@ echo ""
 echo "==> Checking prerequisites..."
 
 if ! command -v kubectl &>/dev/null; then
-  echo "ERROR: kubectl not found. Enable Kubernetes in Docker Desktop." >&2
+  echo "ERROR: kubectl not found." >&2
+  exit 1
+fi
+
+if ! command -v minikube &>/dev/null; then
+  echo "ERROR: minikube not found." >&2
   exit 1
 fi
 
 if ! command -v docker &>/dev/null; then
-  echo "ERROR: docker not found. Install Docker Desktop." >&2
+  echo "ERROR: docker not found." >&2
   exit 1
 fi
 
 context=$(kubectl config current-context)
 echo "  Kubernetes context: $context"
+
+if [[ "$context" != "minikube" ]]; then
+  echo "ERROR: Current context is '$context'. Please switch to minikube: kubectl config use-context minikube" >&2
+  exit 1
+fi
 
 # ── Build Docker images ───────────────────────────────────────────
 echo ""
@@ -66,7 +75,6 @@ kubectl apply -f "$K8S_DIR/backend-deployment.yaml"
 kubectl apply -f "$K8S_DIR/prometheus-deployment.yaml"
 kubectl apply -f "$K8S_DIR/grafana-deployment.yaml"
 kubectl apply -f "$K8S_DIR/frontend-deployment.yaml"
-kubectl apply -f "$K8S_DIR/ingress.yaml"
 
 # ── Wait for deployments ──────────────────────────────────────────
 echo ""
@@ -81,8 +89,7 @@ kubectl rollout status deployment/harvestmart-frontend -n "$NAMESPACE" --timeout
 echo ""
 echo "========================================"
 echo "  FreshMart is running!"
-echo "  Open (after hosts entry): http://freshmart.local"
-echo "  Fallback (NodePort removed): use ingress controller on port 80"
+echo "  Access services via NodePort/port-forward"
 echo "  Prometheus: http://localhost:30090"
 echo "  Grafana: http://localhost:30300 (admin/admin)"
 echo "  Namespace: $NAMESPACE"

@@ -504,7 +504,6 @@ rules:
     resources:
       - deployments
       - replicasets
-      - ingresses
     verbs:
       - get
       - list
@@ -546,15 +545,6 @@ rules:
     resources:
       - cronjobs
       - jobs
-    verbs:
-      - get
-      - list
-      - watch
-  -
-    apiGroups:
-      - networking.k8s.io
-    resources:
-      - ingresses
     verbs:
       - get
       - list

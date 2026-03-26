@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: freshmart
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/rayaneW/stage_usecase_harvestmart.git
+    targetRevision: HEAD
+    path: bakery/k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: freshmart
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
