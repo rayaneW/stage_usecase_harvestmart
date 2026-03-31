@@ -12,13 +12,11 @@ function waitForInstana() {
   window.fetch = function(...args) {
     return originalFetch.apply(this, args)
       .then(response => {
-        const serverTiming = response.headers.get('Server-Timing');
+        // Get the Instana trace ID from response header
+        const instanaTraceId = response.headers.get('x-instana-t');
         
-        if (serverTiming && window.ineum) {
-          const match = serverTiming.match(/intid;desc=([a-f0-9]+)/);
-          if (match && match[1]) {
-            window.ineum('backendTraceId', match[1]);
-          }
+        if (instanaTraceId && window.ineum) {
+          window.ineum('backendTraceId', instanaTraceId);
         }
         
         return response;
