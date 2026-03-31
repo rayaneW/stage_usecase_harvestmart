@@ -147,7 +147,18 @@ const submitOrder = async () => {
     })
 
     if (!response.ok) {
-      throw new Error('Kon bestelling niet plaatsen.')
+      let errorText = 'Kon bestelling niet plaatsen.'
+
+      try {
+        const errorBody = await response.json()
+        if (errorBody?.message) {
+          errorText = errorBody.message
+        }
+      } catch {
+        // Keep default message when error body is not JSON.
+      }
+
+      throw new Error(errorText)
     }
 
     successMessage.value = 'Bestelling succesvol geplaatst. Je wordt doorgestuurd...'
@@ -157,7 +168,7 @@ const submitOrder = async () => {
       router.push('/inventory')
     }, 1200)
   } catch (error) {
-    errorMessage.value = 'Er ging iets mis bij het plaatsen van je bestelling.'
+    errorMessage.value = error?.message || 'Er ging iets mis bij het plaatsen van je bestelling.'
     console.error(error)
   } finally {
     isSubmitting.value = false
