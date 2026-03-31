@@ -20,7 +20,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/restocks")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:30000"}, exposedHeaders = {"Server-Timing", "x-instana-t"})
 public class RestockController {
 
     private final RestockService restockService;
