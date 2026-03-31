@@ -20,7 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/restocks")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:30000"})
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:30000"}, exposedHeaders = {"Server-Timing", "X-Instana-Trace-Id"})
 public class RestockController {
 
     private final RestockService restockService;

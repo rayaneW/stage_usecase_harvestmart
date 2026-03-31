@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:30000"})
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:30000"}, exposedHeaders = {"Server-Timing", "X-Instana-Trace-Id"})
 public class OrderController {
     private final OrderService service;
 
