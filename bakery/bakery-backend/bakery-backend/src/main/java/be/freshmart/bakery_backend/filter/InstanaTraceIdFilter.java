@@ -16,7 +16,6 @@ public class InstanaTraceIdFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Get the Instana trace ID from request header/attribute
         String traceId = request.getHeader("X-INSTANA-T");
         
         if (traceId == null) {

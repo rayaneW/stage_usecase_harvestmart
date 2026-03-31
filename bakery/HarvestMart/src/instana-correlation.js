@@ -1,24 +1,31 @@
 // Instana Backend Correlation interceptor
-// This intercepts fetch calls to read trace ID from Server-Timing header
+// Wait for Instana to be ready before intercepting fetch
 
-const originalFetch = window.fetch;
+function waitForInstana() {
+  if (typeof window.ineum === 'undefined') {
+    setTimeout(waitForInstana, 100);
+    return;
+  }
 
-window.fetch = function(...args) {
-  return originalFetch.apply(this, args)
-    .then(response => {
-      // Read the server-timing header which contains the trace ID
-      const serverTiming = response.headers.get('Server-Timing');
-      
-      if (serverTiming && window.ineum) {
-        // Extract trace ID from: intid;desc=1c8ce48cbc5b8673
-        const match = serverTiming.match(/intid;desc=([a-f0-9]+)/);
-        if (match && match[1]) {
-          window.ineum('backendTraceId', match[1]);
+  const originalFetch = window.fetch;
+
+  window.fetch = function(...args) {
+    return originalFetch.apply(this, args)
+      .then(response => {
+        const serverTiming = response.headers.get('Server-Timing');
+        
+        if (serverTiming && window.ineum) {
+          const match = serverTiming.match(/intid;desc=([a-f0-9]+)/);
+          if (match && match[1]) {
+            window.ineum('backendTraceId', match[1]);
+          }
         }
-      }
-      
-      return response;
-    });
-};
+        
+        return response;
+      });
+  };
+}
+
+waitForInstana();
 
 export {};
