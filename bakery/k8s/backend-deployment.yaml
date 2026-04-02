@@ -57,7 +57,7 @@ spec:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
             - name: INSTANA_AGENT_HOST
-              value: "instana-agent.instana-agent"
+              value: "host.docker.internal"
             - name: INSTANA_AGENT_PORT
               value: "42699"
           readinessProbe:
