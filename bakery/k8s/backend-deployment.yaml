@@ -56,6 +56,12 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
+            - name: INSTANA_AGENT_HOST
+              value: "localhost"
+            - name: INSTANA_AGENT_PORT
+              value: "42699"
+            - name: INSTANA_ENDPOINT_URL
+              value: "https://instana.id.internal"
           readinessProbe:
             httpGet:
               path: /products
