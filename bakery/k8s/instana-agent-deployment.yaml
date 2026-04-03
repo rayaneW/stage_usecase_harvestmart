@@ -1,9 +1,4 @@
 apiVersion: v1
-kind: Namespace
-metadata:
-  name: instana-agent
----
-apiVersion: v1
 kind: ConfigMap
 metadata:
   name: instana-agent-config
