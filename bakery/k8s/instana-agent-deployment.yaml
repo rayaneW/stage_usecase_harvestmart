@@ -1,0 +1,100 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: instana-agent
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: instana-agent-config
+  namespace: instana-agent
+data:
+  config.yaml: |
+    # Instana agent configuration
+    com.instana.agent:
+      host: '10.0.0.100'
+      port: 42699
+      proxy:
+        enabled: false
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: instana-agent
+  namespace: instana-agent
+spec:
+  selector:
+    matchLabels:
+      app: instana-agent
+  template:
+    metadata:
+      labels:
+        app: instana-agent
+    spec:
+      hostNetwork: true
+      hostPID: true
+      dnsPolicy: ClusterFirst
+      containers:
+      - name: instana-agent
+        image: icr.io/instana/agent:latest
+        imagePullPolicy: Always
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - SYS_ADMIN
+        env:
+        - name: INSTANA_AGENT_KEY
+          value: "ohTqxzU6SUSnNmow0uV6NA"
+        - name: INSTANA_AGENT_ENDPOINT
+          value: "instana.id.internal"
+        - name: INSTANA_AGENT_ENDPOINT_PORT
+          value: "443"
+        - name: INSTANA_AGENT_ZONE
+          value: "minikube"
+        - name: INSTANA_KUBERNETES_ENABLED
+          value: "true"
+        - name: INSTANA_KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: INSTANA_KUBERNETES_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: INSTANA_JVM_MAX_HEAP_SIZE
+          value: "512M"
+        volumeMounts:
+        - name: sys
+          mountPath: /sys
+        - name: proc
+          mountPath: /proc
+        - name: etc
+          mountPath: /etc
+        - name: var
+          mountPath: /var
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      tolerations:
+      - effect: NoSchedule
+        operator: Exists
+      - effect: NoExecute
+        operator: Exists
+      volumes:
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: proc
+        hostPath:
+          path: /proc
+      - name: etc
+        hostPath:
+          path: /etc
+      - name: var
+        hostPath:
+          path: /var
