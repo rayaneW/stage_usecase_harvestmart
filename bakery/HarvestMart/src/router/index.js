@@ -42,4 +42,10 @@ const router = createRouter({
   ],
 })
 
+router.afterEach((to) => {
+  const pageName = typeof to.name === 'string' ? to.name : 'page'
+  const formatted = pageName.charAt(0).toUpperCase() + pageName.slice(1)
+  document.title = `FreshMart - ${formatted}`
+})
+
 export default router

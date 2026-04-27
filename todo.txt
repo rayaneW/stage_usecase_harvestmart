@@ -1,0 +1,79 @@
+TODO - Hybrid cloud plan zonder ACE
+
+Doel
+- ACE volledig verwijderen.
+- Hybrid flow behouden: cloud + on-prem.
+- End-to-end observability met Instana behouden.
+
+1. Architectuur aanpassen
+- Verwijder ACE uit ontwerp, documentatie en deploymentbestanden.
+- Bevestig nieuwe flow:
+  Frontend (cloud) -> Backend API (cloud) -> IBM MQ (cloud) -> Consumer service (on-prem) -> PostgreSQL (on-prem).
+
+2. Repo en manifests opsplitsen
+- Maak structuur:
+  - bakery/k8s/cloud/
+  - bakery/k8s/onprem/
+- Verplaats cloud resources naar cloud map:
+  - frontend
+  - backend API
+  - MQ gerelateerde config
+- Verplaats on-prem resources naar onprem map:
+  - postgres
+  - consumer service
+- Houd gedeelde resources apart (optioneel):
+  - bakery/k8s/shared/
+
+3. Backend in twee rollen splitsen
+- API service (cloud):
+  - ontvangt requests van frontend
+  - valideert payload
+  - publiceert message naar IBM MQ
+- Consumer service (on-prem):
+  - leest messages uit IBM MQ
+  - verwerkt business logica
+  - schrijft naar PostgreSQL
+- Zorg voor retry en foutafhandeling (dead-letter queue).
+
+4. Configuratie en secrets
+- Maak aparte config per omgeving:
+  - cloud: MQ endpoint, auth, queue namen
+  - on-prem: DB connectie + MQ consumer config
+- Bewaar secrets per omgeving gescheiden.
+- Verwijder oude ACE secrets/config uit GitOps manifests.
+
+5. ArgoCD aanpassen
+- Maak 2 applications:
+  - freshmart-cloud
+  - freshmart-onprem
+- Laat beide naar juiste map en namespace wijzen.
+- Zet sync policy op beide apps (auto of manual volgens voorkeur).
+
+6. Observability behouden
+- Frontend EUM actief houden.
+- Trace context meesturen in MQ headers (bij publish).
+- Consumer spans/logs toevoegen bij receive, processing en DB write.
+- Controleer in Instana dat 1 request zichtbaar is over cloud + on-prem.
+
+7. Migratie in stappen
+- Stap 1: nieuwe consumer opzetten (zonder traffic switch).
+- Stap 2: testqueue + testberichten door de hele keten.
+- Stap 3: backend publish naar nieuwe queue(s) inschakelen.
+- Stap 4: ACE definitief verwijderen uit manifests en runtime.
+- Stap 5: cleanup van oude routes, config en docs.
+
+8. Validatie checklist
+- Order flow werkt end-to-end.
+- Restock flow werkt end-to-end.
+- Foute berichten gaan naar DLQ.
+- PostgreSQL writes correct en consistent.
+- ArgoCD apps beide Healthy/Synced.
+- Instana traces zichtbaar van frontend tot DB-write.
+
+9. Einddocumentatie updaten
+- In use case ACE vervangen door on-prem consumer service.
+- In architectuurdiagram cloud/on-prem grens duidelijk tonen.
+- In deploymenthoofdstuk uitleggen:
+  - wat in cloud draait
+  - wat on-prem draait
+  - waarom deze keuze past bij hybrid cloud.
