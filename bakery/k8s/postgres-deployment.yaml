@@ -8,6 +8,7 @@ spec:
   openshift: true
   databaseInitSQL:
     name: freshmart-initdb
+    key: init.sql
   instances:
     - name: instance1
       replicas: 1
