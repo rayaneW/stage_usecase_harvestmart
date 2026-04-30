@@ -5,7 +5,7 @@ metadata:
   name: backend-config
   namespace: freshmart
 data:
-  DB_URL: "jdbc:postgresql://postgres-service:5432/freshmart"
+  DB_URL: "jdbc:postgresql://freshmart-primary:5432/freshmart"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -30,14 +30,14 @@ spec:
             - sh
             - -c
             - |
-              until nc -z postgres-service 5432; do
+              until nc -z freshmart-primary 5432; do
                 echo "Waiting for postgres..."; sleep 2
               done
               echo "Postgres is up!"
       containers:
         - name: bakery-backend
-          image: bakery-backend:latest
-          imagePullPolicy: Never          # use local image built by Docker Desktop
+          image: image-registry.openshift-image-registry.svc:5000/freshmart/bakery-backend:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           env:
@@ -49,13 +49,13 @@ spec:
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
-                  key: POSTGRES_USER
+                  name: freshmart-pguser-freshmart
+                  key: user
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
-                  key: POSTGRES_PASSWORD
+                  name: freshmart-pguser-freshmart
+                  key: password
             - name: INSTANA_AGENT_HOST
               value: "host.docker.internal"
             - name: INSTANA_AGENT_PORT
