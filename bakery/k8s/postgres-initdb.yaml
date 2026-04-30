@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: freshmart-initdb
+  namespace: freshmart
+data:
+  init.sql: |
+    GRANT USAGE, CREATE ON SCHEMA public TO freshmart;
+    ALTER SCHEMA public OWNER TO freshmart;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO freshmart;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO freshmart;
