@@ -97,6 +97,6 @@ echo "  Freshmart backend  (port-forward): kubectl port-forward -n $NAMESPACE sv
 echo "  ArgoCD UI          (port-forward): kubectl port-forward -n argocd svc/argocd-server 8080:443"
 echo "  ArgoCD admin password command: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | %{ [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($_)) }"
 echo "  Namespace: $NAMESPACE"
-echo "========================================"Unable to start a cluster. Try again.
+echo "========================================"
 echo ""
 kubectl get pods -n "$NAMESPACE"
