@@ -16,10 +16,10 @@ spec:
     spec:
       containers:
         - name: harvestmart-frontend
-          image: harvestmart-frontend:latest
+          image: image-registry.openshift-image-registry.svc:5000/freshmart/harvestmart-frontend:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 80
+          - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
