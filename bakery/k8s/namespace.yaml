@@ -282,11 +282,11 @@ spec:
             failureThreshold: 3
           resources:
             requests:
-              memory: "768Mi"
-              cpu: 0.5
+              memory: "256Mi"
+              cpu: 100m
             limits:
-              memory: "768Mi"
-              cpu: 1.5
+              memory: "512Mi"
+              cpu: 500m
           ports:
             - containerPort: 42699
       volumes:
