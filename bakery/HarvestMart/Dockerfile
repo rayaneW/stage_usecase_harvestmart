@@ -9,7 +9,7 @@ COPY . .
 RUN npm run build
 
 # ── Stage 2: Serve with Nginx ─────────────────────────────────────
-FROM nginx:1.27
+FROM docker.io/library/nginx:1.27
 
 # Replace default nginx config with ours (includes /api proxy + Vue Router fallback)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
