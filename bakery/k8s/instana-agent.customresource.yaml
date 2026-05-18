@@ -1,0 +1,21 @@
+apiVersion: instana.io/v1
+kind: InstanaAgent
+metadata:
+  name: instana-agent
+  namespace: instana-agent
+spec:
+  zone:
+    name: freshmart-openshift
+  cluster:
+      name: instana-agent-freshmart
+  openshift: true
+  agent:
+    # Store key/downloadKey in a Kubernetes Secret named "instana-agent-keys"
+    # with fields: key and downloadKey.
+    keysSecret: instana-agent-keys
+    endpointHost: agent-acceptor.instana.id.internal
+    endpointPort: "443"
+    env: {}
+    configuration_yaml: |
+      # You can leave this empty, or use this to configure your instana agent.
+      # See https://docs.instana.io/setup_and_manage/host_agent/on/kubernetes/

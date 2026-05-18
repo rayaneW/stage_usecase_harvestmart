@@ -9,6 +9,9 @@ spec:
     repoURL: https://github.com/rayaneW/stage_usecase_harvestmart.git
     targetRevision: HEAD
     path: bakery/k8s
+    directory:
+      recurse: true
+      exclude: '{argocd-application.yaml,argocd-project.yaml,argocd-rbac.yaml,instana-agent.customresource.yaml,deploy.sh}'
   destination:
     server: https://kubernetes.default.svc
     namespace: freshmart
