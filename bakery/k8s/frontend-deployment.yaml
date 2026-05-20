@@ -1,4 +1,13 @@
 ---
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: freshmart
+data:
+  BACKEND_UPSTREAM: "http://bakery-backend-service:8080"
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,6 +29,12 @@ spec:
           imagePullPolicy: Always
           ports:
           - containerPort: 8080
+          env:
+            - name: BACKEND_UPSTREAM
+              valueFrom:
+                configMapKeyRef:
+                  name: frontend-config
+                  key: BACKEND_UPSTREAM
 ---
 apiVersion: v1
 kind: Service
@@ -33,3 +48,15 @@ spec:
   ports:
     - port: 80
       targetPort: 8080
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: harvestmart-frontend-route
+  namespace: freshmart
+spec:
+  to:
+    kind: Service
+    name: harvestmart-frontend-service
+  port:
+    targetPort: 80

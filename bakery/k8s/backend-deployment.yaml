@@ -86,3 +86,15 @@ spec:
     - port: 8080
       targetPort: 8080
   type: ClusterIP
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: bakery-backend-route
+  namespace: freshmart
+spec:
+  to:
+    kind: Service
+    name: bakery-backend-service
+  port:
+    targetPort: 8080

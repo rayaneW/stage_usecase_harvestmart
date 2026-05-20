@@ -11,11 +11,13 @@ RUN npm run build
 # ── Stage 2: Serve with Nginx ─────────────────────────────────────
 FROM docker.io/library/nginx:1.27
 
-# Replace default nginx config with ours (includes /api proxy + Vue Router fallback)
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Render nginx config from template so the backend upstream can be changed per cluster.
+COPY nginx.conf /etc/nginx/templates/default.conf.template
 
 # Copy built Vue app
 COPY --from=build /app/dist /usr/share/nginx/html
+
+ENV BACKEND_UPSTREAM=http://bakery-backend-service:8080
 
 # OpenShift compatibility: remove root user requirement and fix permissions
 RUN mkdir -p /var/cache/nginx/client_temp && \
@@ -23,8 +25,7 @@ RUN mkdir -p /var/cache/nginx/client_temp && \
     chmod -R 777 /var/run && \
     chmod -R 777 /etc/nginx && \
     chmod -R 777 /usr/share/nginx/html && \
-    sed -i 's/^user nginx;/# user nginx;/' /etc/nginx/nginx.conf && \
-    sed -i 's/listen 80;/listen 8080;/' /etc/nginx/conf.d/default.conf
+    sed -i 's/^user nginx;/# user nginx;/' /etc/nginx/nginx.conf
 
 EXPOSE 8080
 

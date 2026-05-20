@@ -13,19 +13,7 @@ RUN mvn clean package -DskipTests -q
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-# Install curl for downloading Instana agent
-RUN apk add --no-cache curl
-
-# Download Instana Java agent
-RUN curl -sSfL -o instana-agent.jar \
-  https://artifact-public.instana.io/artifactory/release/com/instana/instana-java/latest/instana-java-latest.jar
-
 COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
-ENV INSTANA_AGENT_HOST=instana-agent.instana-agent.svc
-ENV INSTANA_AGENT_PORT=42699
-
-ENTRYPOINT ["java", \
-  "-javaagent:/app/instana-agent.jar", \
-  "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
