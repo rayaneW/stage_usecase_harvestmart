@@ -16,5 +16,4 @@ spec:
     to:
       kind: DockerImage
       name: image-registry.openshift-image-registry.svc:5000/freshmart/bakery-backend:latest
-  triggers:
-  - type: ConfigChange
+  triggers: []

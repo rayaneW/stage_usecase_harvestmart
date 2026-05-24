@@ -1,12 +1,12 @@
 ---
----
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: frontend-config
   namespace: freshmart
 data:
-  BACKEND_UPSTREAM: "http://bakery-backend-service:8080"
+  # Set this to the public/backend route of the cloud cluster when deploying on-prem.
+  BACKEND_UPSTREAM: "http://CHANGE-ME-BACKEND-ROUTE"
 ---
 apiVersion: apps/v1
 kind: Deployment

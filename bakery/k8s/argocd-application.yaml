@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: freshmart
+  name: freshmart-cloud
   namespace: openshift-gitops
 spec:
   project: default
@@ -11,7 +11,7 @@ spec:
     path: bakery/k8s
     directory:
       recurse: true
-      exclude: '{argocd-application.yaml,argocd-project.yaml,argocd-rbac.yaml,instana-agent.customresource.yaml,deploy.sh}'
+      exclude: '{argocd-application.yaml,argocd-application-frontend.yaml,argocd-project.yaml,argocd-rbac.yaml,instana-agent.customresource.yaml,deploy.sh,frontend-deployment.yaml,imagestream-frontend.yaml,buildconfig-frontend.yaml}'
   destination:
     server: https://kubernetes.default.svc
     namespace: freshmart

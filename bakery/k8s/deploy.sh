@@ -33,6 +33,7 @@ if [[ "${1:-}" == "--teardown" ]]; then
   echo ""
   echo "==> Removing Argo CD resources..."
   kubectl delete -f "$K8S_DIR/argocd-application.yaml" --ignore-not-found
+  kubectl delete -f "$K8S_DIR/argocd-application-frontend.yaml" --ignore-not-found
   kubectl delete -f "$K8S_DIR/argocd-rbac.yaml" --ignore-not-found
   kubectl delete -f "$K8S_DIR/argocd-project.yaml" --ignore-not-found
 
@@ -96,10 +97,11 @@ kubectl apply -f "$K8S_DIR/argocd-rbac.yaml"
 echo ""
 echo "==> Applying Argo CD application..."
 kubectl apply -f "$K8S_DIR/argocd-application.yaml"
+kubectl apply -f "$K8S_DIR/argocd-application-frontend.yaml"
 
 echo ""
 echo "Argo CD bootstrap completed."
-echo "Next steps for Instana operator-managed agent:"
-echo "  1) kubectl create namespace instana-agent"
-echo "  2) kubectl -n instana-agent create secret generic instana-agent-keys --from-literal=key=<KEY> --from-literal=downloadKey=<DOWNLOAD_KEY>"
-echo "  3) Ensure your Argo app syncs $K8S_DIR/instana-agent.customresource.yaml (or apply it manually)"
+echo "Next steps for hybrid cloud:"
+echo "  1) Keep backend/database/monitoring synced on the cloud cluster with 'freshmart-cloud'."
+echo "  2) Point 'BACKEND_UPSTREAM' in frontend-config to the backend route from the cloud cluster."
+echo "  3) Sync 'freshmart-frontend' on the on-prem cluster with the frontend-only manifests."

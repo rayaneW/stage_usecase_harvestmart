@@ -23,4 +23,5 @@ spec:
   name: instana-agent-operator
   source: community-operators
   sourceNamespace: openshift-marketplace
-  startingCSV: instana-agent-operator.v2.2.15
+  # startingCSV removed to avoid resolution errors when catalog doesn't contain
+  # the specified CSV version. Operator will resolve to latest available CSV.

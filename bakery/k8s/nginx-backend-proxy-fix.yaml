@@ -1,0 +1,33 @@
+# Fix for nginx-backend-proxy: ensure nginx can write cache/logs
+# Adds fsGroup and emptyDir volumes so containers can create /var/cache/nginx and /var/log/nginx
+# This file can be applied directly or tracked by Argo CD (placed in bakery/k8s)
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-backend-proxy
+  namespace: freshmart
+spec:
+  template:
+    metadata:
+      labels:
+        app: nginx-backend-proxy
+    spec:
+      securityContext:
+        fsGroup: 101
+      volumes:
+      - name: nginx-cache
+        emptyDir: {}
+      - name: nginx-logs
+        emptyDir: {}
+      containers:
+      - name: nginx
+        image: nginx:1.27.5
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-cache
+          mountPath: /var/cache/nginx
+        - name: nginx-logs
+          mountPath: /var/log/nginx
+        # keep existing configMap mount if present; this file intentionally omits the conf ConfigMap mount to avoid clobbering
