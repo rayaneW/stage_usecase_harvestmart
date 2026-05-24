@@ -6,7 +6,7 @@ metadata:
   namespace: freshmart
 data:
   # Set this to the public/backend route of the cloud cluster when deploying on-prem.
-  BACKEND_UPSTREAM: "http://CHANGE-ME-BACKEND-ROUTE"
+  BACKEND_UPSTREAM: "http://nginx-backend-proxy-route-freshmart.apps.itz-hnl1i3.infra01-lb.syd05.techzone.ibm.com"
 ---
 apiVersion: apps/v1
 kind: Deployment

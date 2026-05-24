@@ -83,7 +83,8 @@ spec:
   selector:
     app: bakery-backend
   ports:
-    - port: 8080
+    - name: http
+      port: 8080
       targetPort: 8080
   type: ClusterIP
 ---
@@ -97,4 +98,4 @@ spec:
     kind: Service
     name: bakery-backend-service
   port:
-    targetPort: 8080
+    targetPort: http
