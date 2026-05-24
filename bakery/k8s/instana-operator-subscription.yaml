@@ -21,7 +21,6 @@ spec:
   channel: stable
   installPlanApproval: Automatic
   name: instana-agent-operator
-  source: community-operators
+  source: certified-operators
   sourceNamespace: openshift-marketplace
-  # startingCSV removed to avoid resolution errors when catalog doesn't contain
-  # the specified CSV version. Operator will resolve to latest available CSV.
+  startingCSV: instana-agent-operator.v2.2.12
