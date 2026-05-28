@@ -34,6 +34,18 @@ spec:
                 echo "Waiting for postgres..."; sleep 2
               done
               echo "Postgres is up!"
+        - name: download-otel-javaagent
+          image: curlimages/curl:8.4.0
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /agent
+              echo Downloading OpenTelemetry Java agent...
+              curl -sSL -o /agent/opentelemetry-javaagent.jar https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v1.27.0/opentelemetry-javaagent.jar
+          volumeMounts:
+            - name: otel-agent
+              mountPath: /agent
       containers:
         - name: bakery-backend
           image: image-registry.openshift-image-registry.svc:5000/freshmart/bakery-backend:latest
@@ -66,6 +78,19 @@ spec:
               value: "instana-agent.instana-agent.svc"
             - name: INSTANA_AGENT_PORT
               value: "42699"
+            - name: JAVA_TOOL_OPTIONS
+              value: "-javaagent:/otel/agent/opentelemetry-javaagent.jar"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "otel-collector-service:4317"
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: "grpc"
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: "service.name=bakery-backend"
+            - name: OTEL_TRACES_SAMPLER
+              value: "always_on"
+          volumeMounts:
+            - name: otel-agent
+              mountPath: /otel/agent
           readinessProbe:
             httpGet:
               path: /products
@@ -73,6 +98,9 @@ spec:
             initialDelaySeconds: 20
             periodSeconds: 10
             failureThreshold: 5
+      volumes:
+        - name: otel-agent
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
