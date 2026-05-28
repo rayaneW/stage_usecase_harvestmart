@@ -14,12 +14,12 @@ spec:
         # agent.pod.requests.memory is the requested memory allocation in MiB for the agent pods.
         memory: 768Mi
         # agent.pod.requests.cpu are the requested CPU units allocation for the agent pods.
-        cpu: 50m
+        cpu: 100m
       limits:
         # agent.pod.limits.memory set the memory allocation limits in MiB for the agent pods.
         memory: 768Mi
         # agent.pod.limits.cpu sets the CPU units allocation limits for the agent pods.
-        cpu: 100m
+        cpu: 300m
     key: O_xPXPnaToa9ZpkiPG0Elg
     downloadKey: O_xPXPnaToa9ZpkiPG0Elg
     endpointHost: ingress-orange-saas.instana.io
@@ -35,9 +35,9 @@ spec:
           # agent.pod.requests.memory is the requested memory allocation in MiB for the agent pods.
           memory: 768Mi
           # agent.pod.requests.cpu are the requested CPU units allocation for the agent pods.
-          cpu: 50m
+          cpu: 100m
         limits:
           # agent.pod.limits.memory set the memory allocation limits in MiB for the agent pods.
           memory: 768Mi
           # agent.pod.limits.cpu sets the CPU units allocation limits for the agent pods.
-          cpu: 100m
+          cpu: 300m
