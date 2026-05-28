@@ -1,0 +1,81 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promtail-config
+  namespace: freshmart
+data:
+  promtail-config.yaml: |
+    server:
+      http_listen_port: 9080
+      grpc_listen_port: 0
+
+    positions:
+      filename: /tmp/positions.yaml
+
+    clients:
+      - url: http://loki-service:3100/loki/api/v1/push
+
+    scrape_configs:
+      - job_name: kubernetes-pods
+        kubernetes_sd_configs:
+          - role: pod
+        pipeline_stages:
+          - cri: {}
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+          - source_labels: [__meta_kubernetes_pod_container_name]
+            target_label: container
+          - source_labels: [__meta_kubernetes_pod_uid, __meta_kubernetes_pod_container_name]
+            separator: /
+            target_label: __path__
+            replacement: /var/log/pods/*$1/*.log
+
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: promtail
+  namespace: freshmart
+spec:
+  selector:
+    matchLabels:
+      app: promtail
+  template:
+    metadata:
+      labels:
+        app: promtail
+    spec:
+      containers:
+        - name: promtail
+          image: grafana/promtail:latest
+          args:
+            - -config.file=/etc/promtail/promtail-config.yaml
+          ports:
+            - containerPort: 9080
+          volumeMounts:
+            - name: config
+              mountPath: /etc/promtail
+            - name: varlogpods
+              mountPath: /var/log/pods
+              readOnly: true
+            - name: varlogcontainers
+              mountPath: /var/log/containers
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: config
+          configMap:
+            name: promtail-config
+        - name: varlogpods
+          hostPath:
+            path: /var/log/pods
+        - name: varlogcontainers
+          hostPath:
+            path: /var/log/containers
+        - name: tmp
+          emptyDir: {}
