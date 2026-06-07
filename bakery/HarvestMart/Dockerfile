@@ -1,32 +1,33 @@
 ﻿# ── Stage 1: Build Vue app ────────────────────────────────────────
-FROM node:20-alpine AS build
+FROM registry.access.redhat.com/ubi9/nodejs-20 AS build
 WORKDIR /app
 
+# Install dependencies and build the Vue app
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --no-audit --no-fund
 
 COPY . .
 RUN npm run build
 
-# ── Stage 2: Serve with Nginx ─────────────────────────────────────
-FROM docker.io/library/nginx:1.27
-
-# Render nginx config from template so the backend upstream can be changed per cluster.
-COPY nginx.conf /etc/nginx/templates/default.conf.template
-
-# Copy built Vue app
-COPY --from=build /app/dist /usr/share/nginx/html
+# ── Stage 2: Serve with nginx installed on UBI minimal ───────────
+FROM registry.access.redhat.com/ubi9/ubi-minimal AS runtime
 
 ENV BACKEND_UPSTREAM=http://bakery-backend-service:8080
 
-# OpenShift compatibility: remove root user requirement and fix permissions
-RUN mkdir -p /var/cache/nginx/client_temp && \
-    chmod -R 777 /var/cache/nginx && \
-    chmod -R 777 /var/run && \
-    chmod -R 777 /etc/nginx && \
-    chmod -R 777 /usr/share/nginx/html && \
-    sed -i 's/^user nginx;/# user nginx;/' /etc/nginx/nginx.conf
+# Install nginx
+RUN microdnf install -y nginx && microdnf clean all
+
+# Copy nginx config and built assets
+# Place the app under standard nginx html location and use provided nginx.conf
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# OpenShift compatibility: ensure writable dirs and run as non-root user
+RUN mkdir -p /var/cache/nginx/client_temp /var/run /usr/share/nginx/html && \
+    chmod -R 0777 /var/cache/nginx /var/run /etc/nginx /usr/share/nginx/html
 
 EXPOSE 8080
 
 USER 1001
+
+CMD ["nginx", "-g", "daemon off;"]

@@ -21,3 +21,10 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+  ignoreDifferences:
+    - group: build.openshift.io
+      kind: BuildConfig
+      name: bakery-backend
+      namespace: freshmart
+      jsonPointers:
+        - /spec/strategy

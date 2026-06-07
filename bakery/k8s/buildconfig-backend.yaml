@@ -10,8 +10,13 @@ spec:
       ref: main
     contextDir: bakery/bakery-backend/bakery-backend
   strategy:
-    dockerStrategy:
-      dockerfilePath: Dockerfile
+    sourceStrategy:
+      from:
+        kind: DockerImage
+        name: registry.access.redhat.com/ubi9/openjdk-17:1.20
+      env:
+        - name: MAVEN_ARGS
+          value: "-DskipTests clean package"
   output:
     to:
       kind: DockerImage

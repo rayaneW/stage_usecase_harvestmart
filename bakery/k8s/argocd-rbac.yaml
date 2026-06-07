@@ -65,6 +65,7 @@ rules:
   - instana.io
   resources:
   - instanaagents
+  - agents
   verbs:
   - get
   - list
