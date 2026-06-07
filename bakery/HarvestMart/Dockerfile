@@ -22,8 +22,8 @@ ENV BACKEND_UPSTREAM=http://bakery-backend-service:8080
 RUN microdnf install -y nginx && microdnf clean all
 
 # Copy nginx config and built assets
-# Use nginx default include path so config does not need a full nginx.conf file
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Use a complete nginx.conf because the base UBI nginx package expects a full top-level config file
+COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 
 # OpenShift compatibility: ensure writable dirs and run as non-root user
