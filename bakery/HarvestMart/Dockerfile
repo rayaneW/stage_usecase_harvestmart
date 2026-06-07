@@ -4,7 +4,11 @@ WORKDIR /app
 
 # Install dependencies and build the Vue app
 COPY package*.json ./
-RUN npm ci --no-audit --no-fund
+# Switch to root in case the base image runs as non-root so we can write node_modules
+USER 0
+RUN mkdir -p /app/node_modules && npm ci --no-audit --no-fund && chown -R 1001:0 /app
+
+USER 1001
 
 COPY . .
 RUN npm run build
