@@ -22,13 +22,13 @@ ENV BACKEND_UPSTREAM=http://bakery-backend-service:8080
 RUN microdnf install -y nginx && microdnf clean all
 
 # Copy nginx config and built assets
-# Place the app under standard nginx html location and use provided nginx.conf
-COPY nginx.conf /etc/nginx/nginx.conf
+# Use nginx default include path so config does not need a full nginx.conf file
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 
 # OpenShift compatibility: ensure writable dirs and run as non-root user
-RUN mkdir -p /var/cache/nginx/client_temp /var/run /usr/share/nginx/html && \
-    chmod -R 0777 /var/cache/nginx /var/run /etc/nginx /usr/share/nginx/html
+RUN mkdir -p /var/log/nginx /var/cache/nginx/client_temp /var/run /usr/share/nginx/html && \
+    chmod -R 0777 /var/log/nginx /var/cache/nginx /var/run /etc/nginx /usr/share/nginx/html
 
 EXPOSE 8080
 
