@@ -20,6 +20,12 @@ spec:
         memory: 768Mi
         # agent.pod.limits.cpu sets the CPU units allocation limits for the agent pods.
         cpu: 300m
+      tolerations:
+        # Allow agent pods to be scheduled on the (mostly idle) control-plane nodes,
+        # which the workers' CPU exhaustion otherwise prevents.
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule
     key: O_xPXPnaToa9ZpkiPG0Elg
     downloadKey: O_xPXPnaToa9ZpkiPG0Elg
     endpointHost: ingress-orange-saas.instana.io
@@ -41,3 +47,9 @@ spec:
           memory: 768Mi
           # agent.pod.limits.cpu sets the CPU units allocation limits for the agent pods.
           cpu: 300m
+        tolerations:
+          # Allow k8sensor pods to be scheduled on the (mostly idle) control-plane nodes,
+          # which the workers' CPU exhaustion otherwise prevents.
+          - key: node-role.kubernetes.io/master
+            operator: Exists
+            effect: NoSchedule

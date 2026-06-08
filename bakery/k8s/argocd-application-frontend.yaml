@@ -11,7 +11,7 @@ spec:
     path: bakery/k8s
     directory:
       recurse: true
-      exclude: '{argocd-application.yaml,argocd-application-frontend.yaml,argocd-project.yaml,argocd-rbac.yaml,instana-agent.customresource.yaml,instana-agent-service-redirect.yaml,instana-operator-subscription.yaml,deploy.sh,backend-deployment.yaml,imagestream-backend.yaml,buildconfig-backend.yaml,postgres-cluster.yaml,postgres-initdb.yaml,prometheus-deployment.yaml,grafana-deployment.yaml}'
+      exclude: '{argocd-application.yaml,argocd-application-frontend.yaml,argocd-project.yaml,argocd-rbac.yaml,instana-agent.customresource.yaml,copy_instana-agent.customresource.yaml,instana-agent-service-redirect.yaml,instana-operator-subscription.yaml,deploy.sh,backend-deployment.yaml,imagestream-backend.yaml,buildconfig-backend.yaml,postgres-cluster.yaml,postgres-initdb.yaml,prometheus-deployment.yaml,grafana-deployment.yaml}'
   destination:
     server: https://kubernetes.default.svc
     namespace: freshmart
