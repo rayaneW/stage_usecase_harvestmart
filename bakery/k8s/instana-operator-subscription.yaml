@@ -8,9 +8,6 @@ kind: OperatorGroup
 metadata:
   name: instana-operator-group
   namespace: openshift-instana-operator
-spec:
-  targetNamespaces:
-  - openshift-instana-operator
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
