@@ -56,6 +56,30 @@ subjects:
     namespace: freshmart
 
 ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: freshmart-promtail-pod-reader
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: freshmart-promtail-pod-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: freshmart-promtail-pod-reader
+subjects:
+  - kind: ServiceAccount
+    name: promtail
+    namespace: freshmart
+
+---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
