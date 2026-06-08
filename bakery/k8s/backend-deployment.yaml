@@ -30,10 +30,13 @@ spec:
             - /bin/sh
             - -c
             - |
+              set -e
               microdnf install -y curl >/dev/null 2>&1
               mkdir -p /agent
               echo Downloading OpenTelemetry Java agent...
-              curl -sSL -o /agent/opentelemetry-javaagent.jar https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v1.27.0/opentelemetry-javaagent.jar
+              curl -fSL --retry 5 --retry-delay 5 --retry-connrefused \
+                -o /agent/opentelemetry-javaagent.jar \
+                https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v1.27.0/opentelemetry-javaagent.jar
           volumeMounts:
             - name: otel-agent
               mountPath: /agent
