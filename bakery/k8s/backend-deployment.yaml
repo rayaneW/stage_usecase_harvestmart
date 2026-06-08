@@ -72,7 +72,7 @@ spec:
             - name: JAVA_TOOL_OPTIONS
               value: "-javaagent:/otel/agent/opentelemetry-javaagent.jar"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: "otel-collector-service:4317"
+              value: "http://otel-collector-service:4317"
             - name: OTEL_EXPORTER_OTLP_PROTOCOL
               value: "grpc"
             - name: OTEL_RESOURCE_ATTRIBUTES
