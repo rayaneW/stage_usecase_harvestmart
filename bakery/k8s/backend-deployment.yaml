@@ -31,7 +31,6 @@ spec:
             - -c
             - |
               set -e
-              microdnf install -y curl >/dev/null 2>&1
               mkdir -p /agent
               echo Downloading OpenTelemetry Java agent...
               curl -fSL --retry 5 --retry-delay 5 --retry-connrefused \
