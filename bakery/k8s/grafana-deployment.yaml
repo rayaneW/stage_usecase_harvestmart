@@ -19,6 +19,11 @@ data:
         access: proxy
         url: http://loki-service:3100
         editable: true
+      - name: Jaeger
+        type: jaeger
+        access: proxy
+        url: http://jaeger-service:16686
+        editable: true
 
 ---
 apiVersion: apps/v1
@@ -67,3 +72,13 @@ spec:
     - port: 3000
       targetPort: 3000
       nodePort: 30300
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: grafana-route
+  namespace: freshmart
+spec:
+  to:
+    kind: Service
+    name: grafana-service
