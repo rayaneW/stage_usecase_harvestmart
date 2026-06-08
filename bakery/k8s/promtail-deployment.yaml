@@ -100,6 +100,16 @@ spec:
           image: grafana/promtail:latest
           securityContext:
             privileged: true
+          env:
+            # Promtail derives its Kubernetes-SD node filter (selectors:
+            # field: spec.nodeName=<hostname>) from os.Hostname(), which
+            # defaults to the pod name. Without this override the filter
+            # never matches a real node, so discovery silently returns
+            # zero targets and no logs ever get shipped.
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
           args:
             - -config.file=/etc/promtail/promtail-config.yaml
           ports:
