@@ -98,6 +98,8 @@ spec:
       containers:
         - name: promtail
           image: grafana/promtail:latest
+          securityContext:
+            privileged: true
           args:
             - -config.file=/etc/promtail/promtail-config.yaml
           ports:
